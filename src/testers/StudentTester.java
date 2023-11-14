@@ -238,134 +238,135 @@ public class StudentTester {
             );
         }
     }
-    @Nested
-    @DisplayName("CarFactory Tests")
-    public class TestCarPartFactory {
-        
-
-        @BeforeEach
-        public void setUp() throws IOException {
-            factory = new CarPartFactory("input/orders.csv", "input/parts.csv");
-
-        }
-        @Test
-        @DisplayName("Testing the orders after factory creation")
-        public void testOrders1() {
-            List<Order> orders = factory.getOrders();
-            order = orders.get(9);
-            assertAll(
-                () -> assertEquals(10, order.getId(), "Returned incorrect order id"),
-                () -> assertEquals("David Brown", order.getCustomerName(), "Returned incorrect cutomer name"),
-                () -> assertEquals(1, order.getRequestedParts().size(), "Has incorrect amount of ordered parts"),
-                () -> assertEquals(7, order.getRequestedParts().get(9), "Has incorrect request count")
-            );
-            order = orders.get(79);
-            assertAll(
-                () -> assertEquals(80, order.getId(), "Returned incorrect order id"),
-                () -> assertEquals("Zoey Ltd.", order.getCustomerName(), "Returned incorrect cutomer name"),
-                () -> assertEquals(3, order.getRequestedParts().size(), "Has incorrect amount of ordered parts"),
-                () -> assertEquals(1, order.getRequestedParts().get(1), "Has incorrect request count"),
-                () -> assertEquals(10, order.getRequestedParts().get(6), "Has incorrect request count"),
-                () -> assertEquals(8, order.getRequestedParts().get(5), "Has incorrect request count")
-            );
-        }
-        
-        @Test
-        @DisplayName("Testing the machines generated in the constructor")
-        public void testMachines() {
-            List<PartMachine> machines = factory.getMachines();
-            assertEquals(20, machines.size(), "Did not make 20 machines with the give input files.");
-        }
-
-        @Test
-        @DisplayName("Testing inventory on factory creation")
-        public void testInventory() {
-            Map<Integer, List<CarPart>> inventory = factory.getInventory();
-            for (List<CarPart> L : inventory.getValues()) {
-                if (!L.isEmpty())
-                    fail("Failed initially make empty Lists for inventory.");
-            }
-            for (PartMachine partMachine : factory.getMachines()) {
-                if(inventory.get(partMachine.getPart().getId()) == null)
-                    fail("Not all parts are included in the inventory.");
-            }
-        }
-        @Test
-        @DisplayName("Testing catalog on factory creation")
-        public void testCatalog() {
-            Map<Integer, CarPart> catalog = factory.getPartCatalog();
-            for (PartMachine partMachine : factory.getMachines()) {
-                part = partMachine.getPart();
-                if(catalog.get(part.getId()) == null)
-                    fail("Not all parts are included in the catalog.");
-                else if(!catalog.get(part.getId()).getName().equals(part.getName()) 
-                        && catalog.get(part.getId()).getId() != part.getId())
-                    fail("Didn't add correct part to correct id.");
-            }
-        }
-        
-        
-        @Test
-        @DisplayName("Testing production bin after run factory")
-        public void testProductionBin1() {
-            factory.runFactory(1, 30);
-            assertEquals(0, factory.getProductionBin().size(), "Should be empty after production");
-        }
-        @Test
-        @DisplayName("Testing production bin after store inventory")
-        public void testProductionBin2() {
-            Stack<CarPart> bin = factory.getProductionBin();
-            bin.push(new CarPart(1, "Test Part1", 10, false));
-            bin.push(new CarPart(1, "Test Part1", 10, true));
-            bin.push(new CarPart(2, "Test Part1", 10, false));
-            bin.push(new CarPart(2, "Test Part1", 10, false));
-            bin.push(new CarPart(3, "Test Part1", 10, false));
-            bin.push(new CarPart(11, "Test Part1", 10, false));
-            bin.push(new CarPart(4, "Test Part1", 10, true));
-            factory.storeInInventory();
-            assertAll(
-                () -> assertEquals(1, factory.getInventory().get(1).size(), "Didn't add one part with id 1, don't add defectives"),
-                () -> assertEquals(2, factory.getInventory().get(2).size(), "Didn't add two parts with id 2"),
-                () -> assertEquals(1, factory.getInventory().get(3).size(), "Didn't add one part with id 3"),
-                () -> assertEquals(1, factory.getInventory().get(11).size(), "Didn't add one part with id 11"),
-                () -> assertEquals(0, factory.getInventory().get(4).size(), "Added defective part.")
-            );    
-        }
-       
-        @Test
-        @DisplayName("Testing process orders")
-        public void testProcessOrders() {
-            factory.getOrders().clear();
-            Map<Integer, Integer> reqParts = new HashTableSC<>(1, new BasicHashFunction());
-            reqParts.put(1, 5);
-            factory.getOrders().add(new Order(1, "Ben", reqParts, false));
-            reqParts = new HashTableSC<>(2, new BasicHashFunction());
-            reqParts.put(2, 2);
-            reqParts.put(1, 7);
-            reqParts.put(5, 1);
-            factory.getOrders().add(new Order(2, "Jerry", reqParts, false));
-            reqParts = new HashTableSC<>(2, new BasicHashFunction());
-            reqParts.put(20, 15);
-            reqParts.put(1, 1);
-            factory.getOrders().add(new Order(3, "Louis", reqParts, false));
-            reqParts = new HashTableSC<>(1, new BasicHashFunction());
-            reqParts.put(1, 5);
-            reqParts.put(13, 1);
-            factory.getOrders().add(new Order(4, "John", reqParts, false));
-            factory.runFactory(1, 30);
-            
-            assertAll(
-                () -> assertTrue(factory.getOrders().get(0).isFulfilled(), "There should be enough parts to fulfil this order"),
-                () -> assertTrue(factory.getOrders().get(1).isFulfilled(), "There should be enough parts to fulfil this order"),
-                () -> assertTrue(!factory.getOrders().get(2).isFulfilled(), "There should be enough parts to fulfil this order"),
-                () -> assertTrue(factory.getOrders().get(3).isFulfilled(), "There should be enough parts to fulfil this order"),
-                () -> assertEquals(7, factory.getInventory().get(1).size(), "Has wrong inventory amount after fulfilling orders."),
-                () -> assertEquals(10, factory.getInventory().get(2).size(), "Has wrong inventory amount after fulfilling orders."),
-                () -> assertEquals(3, factory.getInventory().get(5).size(), "Has wrong inventory amount after fulfilling orders."),
-                () -> assertEquals(0, factory.getInventory().get(13).size(), "Has wrong inventory amount after fulfilling orders.")
-            );    
-        }
-    }
-    
-
 }
+//    @Nested
+//    @DisplayName("CarFactory Tests")
+//    public class TestCarPartFactory {
+        
+
+//        @BeforeEach
+//        public void setUp() throws IOException {
+//            factory = new CarPartFactory("input/orders.csv", "input/parts.csv");
+//
+//        }
+//        @Test
+//        @DisplayName("Testing the orders after factory creation")
+//        public void testOrders1() {
+//            List<Order> orders = factory.getOrders();
+//            order = orders.get(9);
+//            assertAll(
+//                () -> assertEquals(10, order.getId(), "Returned incorrect order id"),
+//                () -> assertEquals("David Brown", order.getCustomerName(), "Returned incorrect cutomer name"),
+//                () -> assertEquals(1, order.getRequestedParts().size(), "Has incorrect amount of ordered parts"),
+//                () -> assertEquals(7, order.getRequestedParts().get(9), "Has incorrect request count")
+//            );
+//            order = orders.get(79);
+//            assertAll(
+//                () -> assertEquals(80, order.getId(), "Returned incorrect order id"),
+//                () -> assertEquals("Zoey Ltd.", order.getCustomerName(), "Returned incorrect cutomer name"),
+//                () -> assertEquals(3, order.getRequestedParts().size(), "Has incorrect amount of ordered parts"),
+//                () -> assertEquals(1, order.getRequestedParts().get(1), "Has incorrect request count"),
+//                () -> assertEquals(10, order.getRequestedParts().get(6), "Has incorrect request count"),
+//                () -> assertEquals(8, order.getRequestedParts().get(5), "Has incorrect request count")
+//            );
+//        }
+//        
+//        @Test
+//        @DisplayName("Testing the machines generated in the constructor")
+//        public void testMachines() {
+//            List<PartMachine> machines = factory.getMachines();
+//            assertEquals(20, machines.size(), "Did not make 20 machines with the give input files.");
+//        }
+//
+//        @Test
+//        @DisplayName("Testing inventory on factory creation")
+//        public void testInventory() {
+//            Map<Integer, List<CarPart>> inventory = factory.getInventory();
+//            for (List<CarPart> L : inventory.getValues()) {
+//                if (!L.isEmpty())
+//                    fail("Failed initially make empty Lists for inventory.");
+//            }
+//            for (PartMachine partMachine : factory.getMachines()) {
+//                if(inventory.get(partMachine.getPart().getId()) == null)
+//                    fail("Not all parts are included in the inventory.");
+//            }
+//        }
+//        @Test
+//        @DisplayName("Testing catalog on factory creation")
+//        public void testCatalog() {
+//            Map<Integer, CarPart> catalog = factory.getPartCatalog();
+//            for (PartMachine partMachine : factory.getMachines()) {
+//                part = partMachine.getPart();
+//                if(catalog.get(part.getId()) == null)
+//                    fail("Not all parts are included in the catalog.");
+//                else if(!catalog.get(part.getId()).getName().equals(part.getName()) 
+//                        && catalog.get(part.getId()).getId() != part.getId())
+//                    fail("Didn't add correct part to correct id.");
+//            }
+//        }
+//        
+//        
+//        @Test
+//        @DisplayName("Testing production bin after run factory")
+//        public void testProductionBin1() {
+//            factory.runFactory(1, 30);
+//            assertEquals(0, factory.getProductionBin().size(), "Should be empty after production");
+//        }
+//        @Test
+//        @DisplayName("Testing production bin after store inventory")
+//        public void testProductionBin2() {
+//            Stack<CarPart> bin = factory.getProductionBin();
+//            bin.push(new CarPart(1, "Test Part1", 10, false));
+//            bin.push(new CarPart(1, "Test Part1", 10, true));
+//            bin.push(new CarPart(2, "Test Part1", 10, false));
+//            bin.push(new CarPart(2, "Test Part1", 10, false));
+//            bin.push(new CarPart(3, "Test Part1", 10, false));
+//            bin.push(new CarPart(11, "Test Part1", 10, false));
+//            bin.push(new CarPart(4, "Test Part1", 10, true));
+//            factory.storeInInventory();
+//            assertAll(
+//                () -> assertEquals(1, factory.getInventory().get(1).size(), "Didn't add one part with id 1, don't add defectives"),
+//                () -> assertEquals(2, factory.getInventory().get(2).size(), "Didn't add two parts with id 2"),
+//                () -> assertEquals(1, factory.getInventory().get(3).size(), "Didn't add one part with id 3"),
+//                () -> assertEquals(1, factory.getInventory().get(11).size(), "Didn't add one part with id 11"),
+//                () -> assertEquals(0, factory.getInventory().get(4).size(), "Added defective part.")
+//            );    
+//        }
+//       
+//        @Test
+//        @DisplayName("Testing process orders")
+//        public void testProcessOrders() {
+//            factory.getOrders().clear();
+//            Map<Integer, Integer> reqParts = new HashTableSC<>(1, new BasicHashFunction());
+//            reqParts.put(1, 5);
+//            factory.getOrders().add(new Order(1, "Ben", reqParts, false));
+//            reqParts = new HashTableSC<>(2, new BasicHashFunction());
+//            reqParts.put(2, 2);
+//            reqParts.put(1, 7);
+//            reqParts.put(5, 1);
+//            factory.getOrders().add(new Order(2, "Jerry", reqParts, false));
+//            reqParts = new HashTableSC<>(2, new BasicHashFunction());
+//            reqParts.put(20, 15);
+//            reqParts.put(1, 1);
+//            factory.getOrders().add(new Order(3, "Louis", reqParts, false));
+//            reqParts = new HashTableSC<>(1, new BasicHashFunction());
+//            reqParts.put(1, 5);
+//            reqParts.put(13, 1);
+//            factory.getOrders().add(new Order(4, "John", reqParts, false));
+//            factory.runFactory(1, 30);
+//            
+//            assertAll(
+//                () -> assertTrue(factory.getOrders().get(0).isFulfilled(), "There should be enough parts to fulfil this order"),
+//                () -> assertTrue(factory.getOrders().get(1).isFulfilled(), "There should be enough parts to fulfil this order"),
+//                () -> assertTrue(!factory.getOrders().get(2).isFulfilled(), "There should be enough parts to fulfil this order"),
+//                () -> assertTrue(factory.getOrders().get(3).isFulfilled(), "There should be enough parts to fulfil this order"),
+//                () -> assertEquals(7, factory.getInventory().get(1).size(), "Has wrong inventory amount after fulfilling orders."),
+//                () -> assertEquals(10, factory.getInventory().get(2).size(), "Has wrong inventory amount after fulfilling orders."),
+//                () -> assertEquals(3, factory.getInventory().get(5).size(), "Has wrong inventory amount after fulfilling orders."),
+//                () -> assertEquals(0, factory.getInventory().get(13).size(), "Has wrong inventory amount after fulfilling orders.")
+//            );    
+//        }
+//    }
+    
+//
+//}

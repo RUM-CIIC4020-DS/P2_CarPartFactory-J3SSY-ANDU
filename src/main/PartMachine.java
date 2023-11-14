@@ -1,62 +1,108 @@
 package main;
 
+import java.util.Random;
+
+import data_structures.ListQueue;
 import interfaces.Queue;
 
 public class PartMachine {
-   
+	private int id;
+	private CarPart p1;
+	private int period;
+	private double weightError;
+	private int chanceOfDefective;
+	private Queue<Integer> timer;
+	private Queue<CarPart> conveyorBelt;
+	private int totalPartsProduced;
     public PartMachine(int id, CarPart p1, int period, double weightError, int chanceOfDefective) {
-        
+        this.id = id;
+        this.p1 = p1;
+        this.period = period;
+        this.weightError = weightError;
+        this.chanceOfDefective = chanceOfDefective;
     }
     public int getId() {
-       
+    	return id;
     }
     public void setId(int id) {
-        
+        this.id = id;
     }
     public Queue<Integer> getTimer() {
-       
+    	Queue<Integer> timer = new ListQueue<Integer>();
+    	for (int i = period-1; i >= 0; i--) {
+    		timer.enqueue(i);
+    	}
+    	return timer;
     }
     public void setTimer(Queue<Integer> timer) {
-        
+        this.timer = timer;
     }
     public CarPart getPart() {
-       
+    	return p1;
     }
     public void setPart(CarPart part1) {
-        
+        this.p1 = part1;
     }
     public Queue<CarPart> getConveyorBelt() {
-        
+        return conveyorBelt;
     }
     public void setConveyorBelt(Queue<CarPart> conveyorBelt) {
-    	
+    	this.conveyorBelt = conveyorBelt;
     }
     public int getTotalPartsProduced() {
-         
+         return totalPartsProduced;
     }
     public void setTotalPartsProduced(int count) {
-    	
+    	this.totalPartsProduced = count;
     }
     public double getPartWeightError() {
-        
+        return weightError;
     }
     public void setPartWeightError(double partWeightError) {
-        
+        this.weightError = weightError;
     }
     public int getChanceOfDefective() {
-        
+        return chanceOfDefective;
     }
     public void setChanceOfDefective(int chanceOfDefective) {
-        
+        this.chanceOfDefective = chanceOfDefective;
     }
     public void resetConveyorBelt() {
-        
+        for(int i = 0; i < 10; i++) {
+        	conveyorBelt.dequeue();
+        	conveyorBelt.enqueue(null);
+        }
     }
     public int tickTimer() {
-       
+    	int val = timer.dequeue();
+    	timer.enqueue(val);
+    	return val;
     }
     public CarPart produceCarPart() {
-       
+       if (this.tickTimer() != 0) {
+    	   conveyorBelt.enqueue(null);
+       } else {
+    	   this.totalPartsProduced++;
+    	   int newId = p1.getId();
+    	   String newName = p1.getName();
+    	   
+    	   Random rnd = new Random();
+     	   double rndErrorDouble;
+     	   if (rnd.nextInt(2) == 0) {
+     		   rndErrorDouble = rnd.nextInt(5);
+     		   rndErrorDouble = rndErrorDouble / 10;
+     	   } else {
+     		   rndErrorDouble = -rnd.nextInt(5);
+     		   rndErrorDouble = rndErrorDouble / 10;
+     	   }
+     	   double newWeight = p1.getWeight() - rndErrorDouble;
+     	   
+     	   boolean newIsDefective = totalPartsProduced % chanceOfDefective == 0;
+     	   
+     	   CarPart newPart = new CarPart(newId, newName, newWeight, newIsDefective);
+     	   conveyorBelt.enqueue(newPart);
+       }
+       return conveyorBelt.front();
     }
 
     /**

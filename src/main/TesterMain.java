@@ -1,9 +1,13 @@
 package main;
 
 import java.io.IOException;
+import java.util.Random;
 
 public class TesterMain { 
     public static void main(String[] args) {
+    	
+    	
+    	
         try {
             CarPartFactory cpf = new CarPartFactory("input/orders.csv", "input/parts.csv");
             System.out.println(cpf.getMachines().get(1));

@@ -2,9 +2,11 @@ package main;
 
 public class CarPartFactory {
 
-        
+	private String orderPath;
+	private String partsPath;
     public CarPartFactory(String orderPath, String partsPath) throws IOException {
-                
+    	this.orderPath = orderPath;
+    	this.partsPath = partsPath;
     }
     public List<PartMachine> getMachines() {
        
