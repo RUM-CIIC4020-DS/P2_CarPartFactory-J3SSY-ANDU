@@ -20,6 +20,15 @@ public class PartMachine {
         this.period = period;
         this.weightError = weightError;
         this.chanceOfDefective = chanceOfDefective;
+        this.timer = new ListQueue<Integer>();
+        for (int i = period - 1; i >= 0; i--) {
+        	timer.enqueue(i);
+        }
+        this.conveyorBelt = new ListQueue<CarPart>();
+        for (int i = 0; i < 10; i++) {
+        	conveyorBelt.enqueue(null);
+        }
+        this.totalPartsProduced = 0;
     }
     public int getId() {
     	return id;
@@ -28,10 +37,6 @@ public class PartMachine {
         this.id = id;
     }
     public Queue<Integer> getTimer() {
-    	Queue<Integer> timer = new ListQueue<Integer>();
-    	for (int i = period-1; i >= 0; i--) {
-    		timer.enqueue(i);
-    	}
     	return timer;
     }
     public void setTimer(Queue<Integer> timer) {
@@ -74,35 +79,37 @@ public class PartMachine {
         }
     }
     public int tickTimer() {
-    	int val = timer.dequeue();
-    	timer.enqueue(val);
+    	int val = timer.front();
+    	timer.enqueue(timer.dequeue());
     	return val;
     }
     public CarPart produceCarPart() {
        if (this.tickTimer() != 0) {
+//    	   conveyorBelt.dequeue();
     	   conveyorBelt.enqueue(null);
        } else {
-    	   this.totalPartsProduced++;
     	   int newId = p1.getId();
     	   String newName = p1.getName();
     	   
     	   Random rnd = new Random();
      	   double rndErrorDouble;
      	   if (rnd.nextInt(2) == 0) {
-     		   rndErrorDouble = rnd.nextInt(5);
-     		   rndErrorDouble = rndErrorDouble / 10;
+     		   rndErrorDouble = rnd.nextDouble();
      	   } else {
-     		   rndErrorDouble = -rnd.nextInt(5);
-     		   rndErrorDouble = rndErrorDouble / 10;
+     		   rndErrorDouble = rnd.nextDouble();
      	   }
-     	   double newWeight = p1.getWeight() - rndErrorDouble;
+     	   double min = p1.getWeight() - weightError;
+     	   double max = p1.getWeight() + weightError;
+     	   double newWeight = min + (max - min) * rndErrorDouble;
      	   
      	   boolean newIsDefective = totalPartsProduced % chanceOfDefective == 0;
+     	   this.totalPartsProduced += 1;
      	   
      	   CarPart newPart = new CarPart(newId, newName, newWeight, newIsDefective);
+//    	   conveyorBelt.dequeue();
      	   conveyorBelt.enqueue(newPart);
        }
-       return conveyorBelt.front();
+       return conveyorBelt.dequeue();
     }
 
     /**
