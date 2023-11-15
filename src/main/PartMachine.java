@@ -64,7 +64,7 @@ public class PartMachine {
         return weightError;
     }
     public void setPartWeightError(double partWeightError) {
-        this.weightError = weightError;
+        this.weightError = partWeightError;
     }
     public int getChanceOfDefective() {
         return chanceOfDefective;

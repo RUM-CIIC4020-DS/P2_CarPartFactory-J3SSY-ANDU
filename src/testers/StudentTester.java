@@ -177,8 +177,6 @@ public class StudentTester {
                 machine1.produceCarPart();
             }
             for (int i = 0; i < 10; i++) {
-            	if(machine1.getConveyorBelt().front() != null)
-            		System.out.println(i);
                 if (i % 3 == 0 && machine1.getConveyorBelt().front() == null)
                     fail("Didn't place products with proper spacing");
                 else if(i % 3 != 0 && machine1.getConveyorBelt().front() != null)
@@ -274,14 +272,14 @@ public class StudentTester {
         
         @Test
         @DisplayName("Testing the machines generated in the constructor")
-        public void testMachines() {
+        public void testMachines() throws IOException {
             List<PartMachine> machines = factory.getMachines();
             assertEquals(20, machines.size(), "Did not make 20 machines with the give input files.");
         }
 
         @Test
         @DisplayName("Testing inventory on factory creation")
-        public void testInventory() {
+        public void testInventory() throws IOException {
             Map<Integer, List<CarPart>> inventory = factory.getInventory();
             for (List<CarPart> L : inventory.getValues()) {
                 if (!L.isEmpty())
@@ -294,7 +292,7 @@ public class StudentTester {
         }
         @Test
         @DisplayName("Testing catalog on factory creation")
-        public void testCatalog() {
+        public void testCatalog() throws IOException {
             Map<Integer, CarPart> catalog = factory.getPartCatalog();
             for (PartMachine partMachine : factory.getMachines()) {
                 part = partMachine.getPart();
