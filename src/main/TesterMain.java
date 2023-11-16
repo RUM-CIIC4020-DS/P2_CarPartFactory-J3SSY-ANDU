@@ -3,7 +3,16 @@ package main;
 import java.io.IOException;
 import java.util.Random;
 
+/**
+ * The main class for testing the CarPartFactory application.
+ */
 public class TesterMain { 
+	
+	/**
+     * The main entry point for the CarPartFactory testing.
+     *
+     * @param args the command line arguments (not used)
+     */
     public static void main(String[] args) {
     	
     	
