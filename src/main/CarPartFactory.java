@@ -273,7 +273,14 @@ public class CarPartFactory {
 						this.productionBin.push(part);
 					}
 				}
-				partMachine.resetConveyorBelt();
+				int k = 0;
+				while (k < partMachine.getConveyorBelt().size()) {
+            		CarPart resetConveyorBelt = partMachine.getConveyorBelt().dequeue();
+            		if(resetConveyorBelt != null) productionBin.push(resetConveyorBelt);
+            		partMachine.getConveyorBelt().enqueue(null);
+            		k++;
+            	}
+
 			}
 			this.storeInInventory();
 		}
